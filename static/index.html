@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="">
+<head>
+    <meta lang="zh-CN" charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Funnel</title>
+    <link href="/static/notyf.css" rel="stylesheet">
+    <script src="/static/notyf.js"></script>
+    <script src="/static/tailwindcss.js"></script>
+    <script>
+        window.onload = function(){
+            let btn = document.getElementById("btn")
+            let player = document.getElementById("player")
+            let videoSrc = document.getElementById("src")
+            let link = document.getElementById("link")
+
+            let host = window.location.host
+            
+            let notyf = new Notyf({
+                position: {
+                    x: "left",
+                    y: "top"
+                }                
+            });
+            btn.onclick = function(evt){
+                let proxyURL = host + "/proxy?link=" + link.value
+                videoSrc.src = "/proxy?link=" + link.value
+                navigator.clipboard.writeText(proxyURL).then(function (){
+                    notyf.success("视频链接已经成功复制到剪切板");
+                }, function (err){
+
+                })
+                player.load()
+                return false
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="flex justify-center mt-40">
+        <form>
+            <label for="link" class="form-label block text-center text-xl font-bold mb-2 text-gray-700">Video Funnel</label>
+            <input type="text" id="link" name="link"
+                class="form-control
+            grow
+            w-96
+            mt-6
+            px-3
+            py-1.5
+            text-base
+            font-normal
+            text-gray-700
+            bg-white bg-clip-padding
+            border border-solid border-gray-300
+            rounded
+            transition
+            ease-in-out
+            m-0
+            focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none">
+            <button id="btn" class="inline-block px-6 py-2.5 bg-blue-400 text-white font-medium text-xs leading-tight uppercase rounded-full shadow-md hover:bg-blue-500 hover:shadow-lg focus:bg-blue-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-600 active:shadow-lg transition duration-150 ease-in-out">Go</button>
+        </form>
+    </div>
+    <video id="player"  playsinline controls class="mt-20 mb-20 h-1/3 w-2/3 m-auto">
+        <source id="src" src="" type="video/mp4" />
+    </video>
+</body>
