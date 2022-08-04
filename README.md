@@ -1,4 +1,3 @@
-通过多线程请求并缓存数据来加速视频播放
 
 ![Snipaste_2022-08-04_08-43-48](https://blog.dongliu.site/media/image/Snipaste_2022-08-04_08-43-48-16595853521662.png)
 
