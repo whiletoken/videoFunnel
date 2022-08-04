@@ -21,7 +21,7 @@ var (
 
 func main() {
 	threadingNumber = *flag.Int("p", 4, "threading number")
-	blockSize = *flag.Int("s", 1024*1024*4, "block size")
+	blockSize = *flag.Int("s", 1024*1024*1, "block size")
 	serverAddr = *flag.String("addr", "localhost:9800", "listen address")
 	flag.Parse()
 
