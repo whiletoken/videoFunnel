@@ -70,13 +70,18 @@
     function utf8ToBase64(str) {
         return btoa(unescape(encodeURIComponent(str)));
     }
+
     document.getElementById('play-button').onclick = function () {
         var videoUrl = document.getElementById('video-url').value;
         var videoSource = document.getElementById('video-source');
 
         let host = window.location.host
         let linkUrl = utf8ToBase64(videoUrl);
-        let proxyURL = host + "/proxy?link=" + linkUrl
+        let protocol = "http://"
+        if (window.location.protocol === 'https:') {
+            protocol = "https://"
+        }
+        let proxyURL = protocol + host + "/proxy?link=" + linkUrl
         navigator.clipboard.writeText(proxyURL).then(function () {
             console.log(proxyURL);
         }, function (err) {
@@ -90,7 +95,7 @@
         var player = videojs('my-video');
 
         // 重新加载视频源
-        player.src({type: 'video/mp4', src: videoUrl});
+        player.src({type: 'video/mp4', src: proxyURL});
         player.load();
         player.play();
     };
