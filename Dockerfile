@@ -5,7 +5,7 @@ FROM golang:1.18 AS builder
 WORKDIR /app
 
 # 将 go.mod 和 go.sum 文件复制到工作目录
-COPY go.mod ./
+COPY go.mod go.sum ./
 
 # 下载依赖
 RUN go mod download
@@ -19,7 +19,7 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o myapp .
 # 使用更小的基础镜像
 FROM scratch
 
-# 将构建阶段生成的二进制文件复制到最小镜像中
+# 将构建阶段生成的二进制文件和静态文件复制到最小镜像中
 COPY --from=builder /app/myapp .
 COPY --from=builder /app/static ./static
 
