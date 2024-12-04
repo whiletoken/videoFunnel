@@ -5,5 +5,4 @@ services:
     build:  # 指定构建配置
       context: .  # Dockerfile 所在的上下文目录
       dockerfile: Dockerfile
-    ports:
-      - "9800:9800"  # 映射宿主机和容器的端口
+    network_mode: host
