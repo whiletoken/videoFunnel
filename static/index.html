@@ -1,66 +1,100 @@
-<!doctype html>
-<html lang="">
+<!DOCTYPE html>
+<html lang="zh">
 <head>
-    <meta lang="zh-CN" charset="UTF-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Video Funnel</title>
-    <link href="/static/notyf.css" rel="stylesheet">
-    <script src="/static/notyf.js"></script>
-    <script src="/static/tailwindcss.js"></script>
-    <script>
-        window.onload = function(){
-            let btn = document.getElementById("btn")
-            let player = document.getElementById("player")
-            let videoSrc = document.getElementById("src")
-            let link = document.getElementById("link")
+    <title>Video.js 播放器</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/video.js/8.20.0/video-js.min.css" rel="stylesheet">
 
-            let host = window.location.host
-            
-            let notyf = new Notyf({
-                position: {
-                    x: "left",
-                    y: "top"
-                }                
-            });
-            btn.onclick = function(evt){
-                let proxyURL = host + "/proxy?link=" + link.value
-                videoSrc.src = "/proxy?link=" + link.value
-                navigator.clipboard.writeText(proxyURL).then(function (){
-                    notyf.success("视频链接已经成功复制到剪切板");
-                }, function (err){
-
-                })
-                player.load()
-                return false
-            }
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* 主轴居中 */
+            justify-content: center; /* 交叉轴居中 */
+            height: 100vh; /* 设置高度为视口高度 */
+            margin: 0;
         }
-    </script>
+
+        h1 {
+            margin-bottom: 20px; /* 标题和输入框之间的间距 */
+        }
+
+        #video-container {
+            text-align: center; /* 视频播放器的文本居中 */
+        }
+
+        input {
+            width: 300px;
+            margin-bottom: 10px; /* 输入框和按钮之间的间距 */
+            padding: 8px; /* 输入框内边距 */
+            border: 1px solid #ccc; /* 边框样式 */
+            border-radius: 4px; /* 圆角 */
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1); /* 轻微阴影 */
+        }
+
+        button {
+            padding: 10px 20px; /* 按钮内边距 */
+            background-color: #007bff; /* 按钮背景色 */
+            color: white; /* 按钮文字颜色 */
+            border: none; /* 去掉边框 */
+            border-radius: 4px; /* 圆角 */
+            cursor: pointer; /* 鼠标样式 */
+            transition: background-color 0.3s; /* 背景色变化效果 */
+        }
+
+        button:hover {
+            background-color: #0056b3; /* 悬停时改变背景色 */
+        }
+    </style>
 </head>
 <body>
-    <div class="flex justify-center mt-40">
-        <form>
-            <label for="link" class="form-label block text-center text-xl font-bold mb-2 text-gray-700">Video Funnel</label>
-            <input type="text" id="link" name="link"
-                class="form-control
-            grow
-            w-96
-            mt-6
-            px-3
-            py-1.5
-            text-base
-            font-normal
-            text-gray-700
-            bg-white bg-clip-padding
-            border border-solid border-gray-300
-            rounded
-            transition
-            ease-in-out
-            m-0
-            focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none">
-            <button id="btn" class="inline-block px-6 py-2.5 bg-blue-400 text-white font-medium text-xs leading-tight uppercase rounded-full shadow-md hover:bg-blue-500 hover:shadow-lg focus:bg-blue-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-600 active:shadow-lg transition duration-150 ease-in-out">Go</button>
-        </form>
-    </div>
-    <video id="player"  playsinline controls class="mt-20 mb-20 h-1/3 w-2/3 m-auto">
-        <source id="src" src="" type="video/mp4" />
+
+<h1>多线程加载视频</h1>
+<div id="video-container">
+    <label for="video-url">输入视频 URL:</label>
+    <br>
+    <input type="text" id="video-url" placeholder="请输入视频地址">
+    <button id="play-button">播放</button>
+    <br>
+    <video id="my-video" class="video-js" controls preload="auto" width="640" height="264" data-setup="{}">
+        <source id="video-source" src="" type="video/mp4">
+        您的浏览器不支持 HTML5 video 标签。
     </video>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/video.js/8.20.0/video.min.js"></script>
+
+<script>
+    function utf8ToBase64(str) {
+        return btoa(unescape(encodeURIComponent(str)));
+    }
+    document.getElementById('play-button').onclick = function () {
+        var videoUrl = document.getElementById('video-url').value;
+        var videoSource = document.getElementById('video-source');
+
+        let host = window.location.host
+        let linkUrl = utf8ToBase64(videoUrl);
+        let proxyURL = host + "/proxy?link=" + linkUrl
+        navigator.clipboard.writeText(proxyURL).then(function () {
+            console.log(proxyURL);
+        }, function (err) {
+
+        })
+
+        // 设置视频源
+        videoSource.src = proxyURL;
+
+        // 获取 Video.js 播放器实例
+        var player = videojs('my-video');
+
+        // 重新加载视频源
+        player.src({type: 'video/mp4', src: videoUrl});
+        player.load();
+        player.play();
+    };
+</script>
+
 </body>
+</html>

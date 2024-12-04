@@ -3,6 +3,7 @@ package main
 import (
 	"embed"
 	_ "embed"
+	"encoding/base64"
 	"flag"
 	"fmt"
 	"log"
@@ -20,9 +21,9 @@ var (
 )
 
 func main() {
-	threadingNumber = *flag.Int("p", 4, "threading number")
+	threadingNumber = *flag.Int("p", 2, "threading number")
 	blockSize = *flag.Int("s", 1024*1024*1, "block size")
-	serverAddr = *flag.String("addr", "localhost:9800", "listen address")
+	serverAddr = *flag.String("addr", "0.0.0.0:9800", "listen address")
 	flag.Parse()
 
 	http.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
@@ -45,8 +46,15 @@ func proxyServer(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
-	url := r.Form.Get("link") // 获取实际请求的连接
-	log.Printf("proxy request url : %s\n", url)
+	encoded := r.Form.Get("link") // 获取实际请求的连接
+	log.Printf("proxy request url : %s\n", encoded)
+
+	// 解码
+	urlEncode, err := base64.StdEncoding.DecodeString(encoded)
+	if err != nil {
+		log.Fatal("解码失败:", err)
+	}
+	url := string(urlEncode)
 
 	if r.Header.Get("Range") == "" { // 请求初始化
 		resp, err := http.Get(url)
