@@ -5,7 +5,7 @@ FROM golang:1.18 AS builder
 WORKDIR /app
 
 # 将 go.mod 和 go.sum 文件复制到工作目录
-COPY go.mod go.sum ./
+COPY go.mod ./
 
 # 下载依赖
 RUN go mod download
