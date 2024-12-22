@@ -13,8 +13,16 @@ RUN go mod download
 # 将其余的应用程序源代码复制到工作目录
 COPY . .
 
+# 定义默认架构为 amd64
+ARG TARGETARCH=amd64
+
 # 构建 Go 应用程序为静态二进制文件，避免 CGO
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o myapp .
+# 不同架构使用不同的 GOARCH
+RUN if [ "$TARGETARCH" = "arm" ]; then \
+      CGO_ENABLED=0 GOOS=linux GOARCH=arm go build -o myapp .; \
+    else \
+      CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o myapp .; \
+    fi
 
 # 使用更小的基础镜像
 FROM scratch
